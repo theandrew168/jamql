@@ -97,6 +97,7 @@ var filterFuncs = map[string]map[string]filterFunc{
 	},
 }
 
+// return a new slice of filtered tracks (doesn't mutate)
 func (f Filter) Apply(tracks []Track) []Track {
 	ops, ok := filterFuncs[f.Key]
 	if !ok {
@@ -108,7 +109,7 @@ func (f Filter) Apply(tracks []Track) []Track {
 		return []Track{}
 	}
 
-	results := []Track{}
+	var results []Track
 	for _, track := range tracks {
 		if ff(track, f.Value) {
 			results = append(results, track)

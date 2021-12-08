@@ -1,9 +1,26 @@
 package main
 
 import (
+	"context"
 	"embed"
+	"errors"
+	"fmt"
+	"io/fs"
 	"log"
+	"net"
+	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
+	"time"
+
+	"github.com/coreos/go-systemd/daemon"
+	"github.com/go-chi/chi/v5"
+	"github.com/klauspost/compress/gzhttp"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
+
+	"github.com/theandrew168/jamql/internal/test"
+	"github.com/theandrew168/jamql/internal/web"
 )
 
 //go:embed static
@@ -14,5 +31,83 @@ var logo []byte
 
 func main() {
 	logger := log.New(os.Stdout, "", log.Lshortfile)
-	logger.Println("Hello world")
+	storage := test.NewMockStorage(test.SampleTracks)
+
+	app := web.NewApplication(storage, logger)
+	port := "5000"
+
+	// setup http.Handler for static files
+	static, _ := fs.Sub(staticFS, "static")
+	staticServer := http.FileServer(http.FS(static))
+	gzipStaticServer := gzhttp.GzipHandler(staticServer)
+
+	// construct the top-level router
+	r := chi.NewRouter()
+	r.Mount("/", app.Router())
+	r.Handle("/metrics", promhttp.Handler())
+	r.Handle("/static/*", http.StripPrefix("/static", gzipStaticServer))
+	r.HandleFunc("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "image/webp")
+		w.Write(logo)
+	})
+	r.HandleFunc("/ping", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("pong"))
+	})
+
+	addr := fmt.Sprintf("127.0.0.1:%s", port)
+	srv := &http.Server{
+		Addr: addr,
+		Handler: r,
+
+		IdleTimeout:  time.Minute,
+		ReadTimeout:  10 * time.Second,
+		WriteTimeout: 30 * time.Second,
+	}
+
+	// open up the socket listener
+	l, err := net.Listen("tcp", addr)
+	if err != nil {
+		logger.Fatalln(err)
+	}
+
+	// let systemd know that we are good to go (no-op if not using systemd)
+	daemon.SdNotify(false, daemon.SdNotifyReady)
+	logger.Printf("started server on %s\n", addr)
+
+
+	// kick off a goroutine to listen for SIGINT and SIGTERM
+	shutdownError := make(chan error)
+	go func() {
+		// idle until a signal is caught
+		quit := make(chan os.Signal, 1)
+		signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+		<-quit
+
+		// give the web server 5 seconds to shutdown gracefully
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+
+		// shutdown the web server and track any errors
+		logger.Println("stopping server")
+		srv.SetKeepAlivesEnabled(false)
+		err := srv.Shutdown(ctx)
+		if err != nil {
+			shutdownError <- err
+		}
+
+		shutdownError <- nil
+	}()
+
+	err = srv.Serve(l)
+	if !errors.Is(err, http.ErrServerClosed) {
+		logger.Fatalln(err)
+	}
+
+	// check for shutdown errors
+	err = <-shutdownError
+	if err != nil {
+		logger.Fatalln(err)
+	}
+
+	logger.Println("stopped server")
 }
