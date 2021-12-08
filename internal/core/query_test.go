@@ -41,12 +41,12 @@ func TestQueryBuild(t *testing.T) {
 			want:  `year:2000-2010`,
 		},
 		{
-			name:  "Multiple",
+			name: "Multiple",
 			query: Query{
 				Artist: "Ben Folds",
 				Album:  "Songs for Silverman",
 			},
-			want:  `artist:"Ben Folds" album:"Songs for Silverman"`,
+			want: `artist:"Ben Folds" album:"Songs for Silverman"`,
 		},
 	}
 
@@ -61,7 +61,7 @@ func TestQueryBuild(t *testing.T) {
 }
 
 func TestNewQuery(t *testing.T) {
-	tests := []struct{
+	tests := []struct {
 		name    string
 		filters []Filter
 		want    string
@@ -72,38 +72,38 @@ func TestNewQuery(t *testing.T) {
 			want:    ``,
 		},
 		{
-			name:    "Single",
+			name: "Single",
 			filters: []Filter{
 				{"artist", "equals", "Ben Folds"},
 			},
-			want:    `artist:"Ben Folds"`,
+			want: `artist:"Ben Folds"`,
 		},
 		{
-			name:    "Duplicate",
+			name: "Duplicate",
 			filters: []Filter{
 				{"artist", "equals", "Ben Folds"},
 				{"artist", "equals", "The Mars Volta"},
 			},
-			want:    `artist:"The Mars Volta"`,
+			want: `artist:"The Mars Volta"`,
 		},
 		{
-			name:    "IgnoreInvalidYear",
+			name: "IgnoreInvalidYear",
 			filters: []Filter{
 				{"artist", "equals", "Ben Folds"},
 				{"year", "equals", "InvalidYear"},
 			},
-			want:    `artist:"Ben Folds"`,
+			want: `artist:"Ben Folds"`,
 		},
 		{
-			name:    "CountryBangers",
+			name: "CountryBangers",
 			filters: []Filter{
 				{"genre", "equals", "country"},
 				{"year", "equals", "1990-1999"},
 			},
-			want:    `genre:"country" year:1990-1999`,
+			want: `genre:"country" year:1990-1999`,
 		},
 		{
-			name:    "All",
+			name: "All",
 			filters: []Filter{
 				{"name", "equals", "Late"},
 				{"artist", "equals", "Ben Folds"},
@@ -111,7 +111,7 @@ func TestNewQuery(t *testing.T) {
 				{"genre", "equals", "Alt Rock"},
 				{"year", "equals", "2005"},
 			},
-			want:    `track:"Late" artist:"Ben Folds" album:"Songs for Silverman" genre:"Alt Rock" year:2005`,
+			want: `track:"Late" artist:"Ben Folds" album:"Songs for Silverman" genre:"Alt Rock" year:2005`,
 		},
 	}
 
