@@ -1,2 +1,2 @@
-# jamql
+# JamQL
 Smart playlists for Spotify
