@@ -1,60 +1,62 @@
-package core
+package core_test
 
 import (
 	"testing"
+
+	"github.com/theandrew168/jamql/internal/core"
 )
 
 func TestQueryBuild(t *testing.T) {
 	tests := []struct {
 		name  string
-		query Query
+		query core.Query
 		want  string
 	}{
 		{
-			name:  "Name",
-			query: Query{Name: "Late"},
-			want:  `track:"Late"`,
+			"Name",
+			core.Query{Name: "Late"},
+			`track:"Late"`,
 		},
 		{
-			name:  "Artist",
-			query: Query{Artist: "Ben Folds"},
-			want:  `artist:"Ben Folds"`,
+			"Artist",
+			core.Query{Artist: "Ben Folds"},
+			`artist:"Ben Folds"`,
 		},
 		{
-			name:  "Album",
-			query: Query{Album: "Songs for Silverman"},
-			want:  `album:"Songs for Silverman"`,
+			"Album",
+			core.Query{Album: "Songs for Silverman"},
+			`album:"Songs for Silverman"`,
 		},
 		{
-			name:  "Genre",
-			query: Query{Genre: "country"},
-			want:  `genre:"country"`,
+			"Genre",
+			core.Query{Genre: "country"},
+			`genre:"country"`,
 		},
 		{
-			name:  "Year",
-			query: Query{Year: "2000"},
-			want:  `year:2000`,
+			"Year",
+			core.Query{Year: "2000"},
+			`year:2000`,
 		},
 		{
-			name:  "YearRange",
-			query: Query{Year: "2000-2010"},
-			want:  `year:2000-2010`,
+			"YearRange",
+			core.Query{Year: "2000-2010"},
+			`year:2000-2010`,
 		},
 		{
-			name: "Multiple",
-			query: Query{
+			"Multiple",
+			core.Query{
 				Artist: "Ben Folds",
 				Album:  "Songs for Silverman",
 			},
-			want: `artist:"Ben Folds" album:"Songs for Silverman"`,
+			`artist:"Ben Folds" album:"Songs for Silverman"`,
 		},
 	}
 
-	for _, test := range tests {
-		t.Run(test.name, func(t *testing.T) {
-			q := test.query.Build()
-			if q != test.want {
-				t.Errorf("want %q; got %q", test.want, q)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			q := tt.query.String()
+			if q != tt.want {
+				t.Errorf("want %q; got %q", tt.want, q)
 			}
 		})
 	}
@@ -63,63 +65,63 @@ func TestQueryBuild(t *testing.T) {
 func TestNewQuery(t *testing.T) {
 	tests := []struct {
 		name    string
-		filters []Filter
+		filters []core.Filter
 		want    string
 	}{
 		{
-			name:    "Empty",
-			filters: []Filter{},
-			want:    ``,
+			"Empty",
+			[]core.Filter{},
+			``,
 		},
 		{
-			name: "Single",
-			filters: []Filter{
+			"Single",
+			[]core.Filter{
 				{"artist", "equals", "Ben Folds"},
 			},
-			want: `artist:"Ben Folds"`,
+			`artist:"Ben Folds"`,
 		},
 		{
-			name: "Duplicate",
-			filters: []Filter{
+			"Duplicate",
+			[]core.Filter{
 				{"artist", "equals", "Ben Folds"},
 				{"artist", "equals", "The Mars Volta"},
 			},
-			want: `artist:"The Mars Volta"`,
+			`artist:"The Mars Volta"`,
 		},
 		{
-			name: "IgnoreInvalidYear",
-			filters: []Filter{
+			"IgnoreInvalidYear",
+			[]core.Filter{
 				{"artist", "equals", "Ben Folds"},
 				{"year", "equals", "InvalidYear"},
 			},
-			want: `artist:"Ben Folds"`,
+			`artist:"Ben Folds"`,
 		},
 		{
-			name: "CountryBangers",
-			filters: []Filter{
+			"CountryBangers",
+			[]core.Filter{
 				{"genre", "equals", "country"},
 				{"year", "equals", "1990-1999"},
 			},
-			want: `genre:"country" year:1990-1999`,
+			`genre:"country" year:1990-1999`,
 		},
 		{
-			name: "All",
-			filters: []Filter{
+			"All",
+			[]core.Filter{
 				{"name", "equals", "Late"},
 				{"artist", "equals", "Ben Folds"},
 				{"album", "equals", "Songs for Silverman"},
 				{"genre", "equals", "Alt Rock"},
 				{"year", "equals", "2005"},
 			},
-			want: `track:"Late" artist:"Ben Folds" album:"Songs for Silverman" genre:"Alt Rock" year:2005`,
+			`track:"Late" artist:"Ben Folds" album:"Songs for Silverman" genre:"Alt Rock" year:2005`,
 		},
 	}
 
-	for _, test := range tests {
-		t.Run(test.name, func(t *testing.T) {
-			q := NewQuery(test.filters).Build()
-			if q != test.want {
-				t.Errorf("want %q; got %q", test.want, q)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			q := core.NewQuery(tt.filters).String()
+			if q != tt.want {
+				t.Errorf("want %q; got %q", tt.want, q)
 			}
 		})
 	}

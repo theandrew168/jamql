@@ -52,7 +52,7 @@ func NewQuery(filters []Filter) Query {
 // Assemble the Query's fields into a Spotify-compatible string. If some fields
 // aren't present (aka they are their zero value) then they won't be part of
 // the built query string.
-func (q Query) Build() string {
+func (q Query) String() string {
 	query := []string{}
 	if q.Name != "" {
 		query = append(query, fmt.Sprintf(`track:"%s"`, q.Name))

@@ -1,73 +1,76 @@
-package core
+package core_test
 
 import (
 	"testing"
+
+	"github.com/theandrew168/jamql/internal/core"
+	"github.com/theandrew168/jamql/internal/test"
 )
 
 func TestValidFilters(t *testing.T) {
 	tests := []struct {
-		Name   string
-		Filter Filter
-		Count  int
+		name   string
+		filter core.Filter
+		count  int
 	}{
 		{
-			Name:   "NameEquals",
-			Filter: Filter{"name", "equals", "teflon"},
-			Count:  1,
+			"NameEquals",
+			core.Filter{"name", "equals", "teflon"},
+			1,
 		},
 		{
-			Name:   "NameContains",
-			Filter: Filter{"name", "contains", "land"},
-			Count:  2,
+			"NameContains",
+			core.Filter{"name", "contains", "land"},
+			2,
 		},
 		{
-			Name:   "ArtistEquals",
-			Filter: Filter{"artist", "equals", "ben folds"},
-			Count:  4,
+			"ArtistEquals",
+			core.Filter{"artist", "equals", "ben folds"},
+			4,
 		},
 		{
-			Name:   "ArtistContains",
-			Filter: Filter{"artist", "contains", "folds"},
-			Count:  7,
+			"ArtistContains",
+			core.Filter{"artist", "contains", "folds"},
+			7,
 		},
 		{
-			Name:   "AlbumEquals",
-			Filter: Filter{"album", "equals", "octahedron"},
-			Count:  3,
+			"AlbumEquals",
+			core.Filter{"album", "equals", "octahedron"},
+			3,
 		},
 		{
-			Name:   "AlbumContains",
-			Filter: Filter{"album", "contains", "amen"},
-			Count:  3,
+			"AlbumContains",
+			core.Filter{"album", "contains", "amen"},
+			3,
 		},
 		{
-			Name:   "GenreEquals",
-			Filter: Filter{"genre", "equals", "prog rock"},
-			Count:  3,
+			"GenreEquals",
+			core.Filter{"genre", "equals", "prog rock"},
+			3,
 		},
 		{
-			Name:   "GenreContains",
-			Filter: Filter{"genre", "contains", "rock"},
-			Count:  10,
+			"GenreContains",
+			core.Filter{"genre", "contains", "rock"},
+			10,
 		},
 		{
-			Name:   "YearEquals",
-			Filter: Filter{"year", "equals", "1997"},
-			Count:  3,
+			"YearEquals",
+			core.Filter{"year", "equals", "1997"},
+			3,
 		},
 		{
-			Name:   "YearBetween",
-			Filter: Filter{"year", "between", "1990-1999"},
-			Count:  3,
+			"YearBetween",
+			core.Filter{"year", "between", "1990-1999"},
+			3,
 		},
 	}
 
-	for _, test := range tests {
-		t.Run(test.Name, func(t *testing.T) {
-			matches := test.Filter.Apply(sampleTracks)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			matches := tt.filter.Apply(test.SampleTracks)
 			count := len(matches)
-			if count != test.Count {
-				t.Errorf("want %d; got %d", test.Count, count)
+			if count != tt.count {
+				t.Errorf("want %d; got %d", tt.count, count)
 			}
 		})
 	}
