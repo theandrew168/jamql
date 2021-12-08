@@ -1,5 +1,9 @@
 package core
 
+import (
+	"net/http"
+)
+
 type Track struct {
 	ID      string
 	Name    string
@@ -11,6 +15,6 @@ type Track struct {
 }
 
 type TrackStorage interface {
-	SearchTracks(filters []Filter) ([]Track, error)
-	SaveTracks(tracks []Track, name, desc string) error
+	SearchTracks(r *http.Request, filters []Filter) ([]Track, error)
+	SaveTracks(r *http.Request, tracks []Track, name, desc string) error
 }

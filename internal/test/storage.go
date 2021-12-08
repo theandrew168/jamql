@@ -1,6 +1,8 @@
 package test
 
 import (
+	"net/http"
+
 	"github.com/theandrew168/jamql/internal/core"
 )
 
@@ -15,7 +17,7 @@ func NewMockStorage(tracks []core.Track) core.Storage {
 	return &s
 }
 
-func (s *mockStorage) SearchTracks(filters []core.Filter) ([]core.Track, error) {
+func (s *mockStorage) SearchTracks(r *http.Request, filters []core.Filter) ([]core.Track, error) {
 	// handle no filters as a special case (return no tracks)
 	if len(filters) == 0 {
 		return []core.Track{}, nil
@@ -30,7 +32,7 @@ func (s *mockStorage) SearchTracks(filters []core.Filter) ([]core.Track, error) 
 	return tracks, nil
 }
 
-func (s *mockStorage) SaveTracks(tracks []core.Track, name, desc string) error {
+func (s *mockStorage) SaveTracks(r *http.Request, tracks []core.Track, name, desc string) error {
 	// mocking save is a no-op
 	return nil
 }

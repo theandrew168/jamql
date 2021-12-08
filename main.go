@@ -4,6 +4,7 @@ import (
 	"context"
 	"embed"
 	"errors"
+	"flag"
 	"fmt"
 	"io/fs"
 	"log"
@@ -19,6 +20,7 @@ import (
 	"github.com/klauspost/compress/gzhttp"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
+	"github.com/theandrew168/jamql/internal/config"
 	"github.com/theandrew168/jamql/internal/test"
 	"github.com/theandrew168/jamql/internal/web"
 )
@@ -31,10 +33,24 @@ var logo []byte
 
 func main() {
 	logger := log.New(os.Stdout, "", log.Lshortfile)
-	storage := test.NewMockStorage(test.SampleTracks)
 
+	conf := flag.String("conf", "", "app config file")
+	flag.Parse()
+
+	// all vars are optional so no conf file is required
+	var cfg config.Config
+	if *conf == "" {
+		cfg = config.Defaults()
+	} else {
+		var err error
+		cfg, err = config.ReadFile(*conf)
+		if err != nil {
+			logger.Fatalln(err)
+		}
+	}
+
+	storage := test.NewMockStorage(test.SampleTracks)
 	app := web.NewApplication(storage, logger)
-	port := "5000"
 
 	// setup http.Handler for static files
 	static, _ := fs.Sub(staticFS, "static")
@@ -54,9 +70,9 @@ func main() {
 		w.Write([]byte("pong"))
 	})
 
-	addr := fmt.Sprintf("127.0.0.1:%s", port)
+	addr := fmt.Sprintf("127.0.0.1:%s", cfg.Port)
 	srv := &http.Server{
-		Addr: addr,
+		Addr:    addr,
 		Handler: r,
 
 		IdleTimeout:  time.Minute,
@@ -73,7 +89,6 @@ func main() {
 	// let systemd know that we are good to go (no-op if not using systemd)
 	daemon.SdNotify(false, daemon.SdNotifyReady)
 	logger.Printf("started server on %s\n", addr)
-
 
 	// kick off a goroutine to listen for SIGINT and SIGTERM
 	shutdownError := make(chan error)

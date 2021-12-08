@@ -2,8 +2,13 @@ package web
 
 import (
 	"bytes"
+	"errors"
 	"html/template"
 	"net/http"
+)
+
+var (
+	ErrUnauthorized = errors.New("core: unauthorized")
 )
 
 func (app *Application) errorResponse(w http.ResponseWriter, r *http.Request, status int, tmpl string) {
