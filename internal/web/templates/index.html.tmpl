@@ -8,17 +8,21 @@
 	<meta name="description" content="JamQL - Programmatic Playlists for Spotify" />
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
-	<link rel="stylesheet" href="/static/css/tachyons.min.css">
+	<link rel="stylesheet" href="/static/css/minireset.min.css">
+	<link rel="stylesheet" href="/static/css/basscss.min.css">
 	<link rel="stylesheet" href="/static/css/custom.css">
 	<script src="/static/js/alpine.min.js" defer></script>
 </head>
 
 <body class="avenir bg-wine">
-	<div class="vh-100 w-100 dt">
-		<div class="dtc v-mid tc">
-			<p class="f-subheadline mv4 white">JamQL</p>
-			<a href="/jamql" class="b link b--none br3 pa3 wine bg-white hover-bg-near-white">Login with Spotify</a>
-		</div>
+
+	<!-- container (horiz and vert centered) -->
+	<div class="full-height flex flex-column items-center justify-center p2">
+
+		<!-- main label and login button -->
+		<h1 class="mb2 h1 white">JamQL</h1>
+		<a href="/jamql" class="p1 rounded text-decoration-none flex-none wine bg-white hover-bg-eggshell">Login with Spotify</a>
+
 	</div>
 </body>
 

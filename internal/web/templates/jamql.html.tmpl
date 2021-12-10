@@ -8,40 +8,50 @@
 	<meta name="description" content="JamQL - Programmatic Playlists for Spotify" />
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
-	<link rel="stylesheet" href="/static/css/tachyons.min.css">
+	<link rel="stylesheet" href="/static/css/minireset.min.css">
+	<link rel="stylesheet" href="/static/css/basscss.min.css">
 	<link rel="stylesheet" href="/static/css/custom.css">
 	<script src="/static/js/alpine.min.js" defer></script>
 </head>
 
-<body class="avenir bg-near-white">
-	<form action="/jamql" class="pa3 mw7 center">
+<body class="avenir bg-eggshell">
+	<!-- container -->
+	<div class="flex flex-column items-center m2">
 
 		<!-- filter box -->
-		<div class="bg-wine br3 pa2">
-			<div class="flex">
-				<select class="flex-auto pa2 ma2" name="filter-key">
+		<div class="bg-wine rounded p2 sm-col-8 md-col-6">
+
+			<!-- top row -->
+			<div class="flex gap1 mb1">
+				<!-- key -->
+				<select class="flex-auto p1 bg-white rounded border-none" name="filter-key">
 					<option value="name">Name</option>
-					<option value="artist">Artist</option>
+					<option value="artist" selected>Artist</option>
 					<option value="album">Album</option>
 					<option value="genre">Genre</option>
 					<option value="year">Year</option>
 				</select>
-				<select class="flex-auto pa2 ma2" name="filter-op">
-					<option value="equals">Equals</option>
+				<!-- op -->
+				<select class="flex-auto p1 bg-white rounded border-none" name="filter-op">
+					<option value="equals" selected>Equals</option>
 					<option value="contains">Contains</option>
 				</select>
 			</div>
-			<div class="flex items-center">
-				<input class="flex-auto pa2 ma2" type="text" name="filter-value" placeholder="Filter..."></input>
-				<div class="br2 ma2 bg-red hover-bg-dark-red">
+
+			<!-- bottom row -->
+			<div class="flex gap1">
+				<input class="flex-auto p1 bg-white rounded border-none" type="text" name="filter-value" placeholder="Filter..."></input>
+				<div class="rounded m2 bg-red hover-bg-dark-red">
+					<!--
 					<svg class="h2 w2 white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
 					</svg>
+					-->
 				</div>
 			</div>
 		</div>
 
-	</form>
+	</div>
 </body>
 
 </html>
