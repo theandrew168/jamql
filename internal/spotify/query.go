@@ -1,9 +1,11 @@
-package core
+package spotify
 
 import (
 	"fmt"
 	"regexp"
 	"strings"
+
+	"github.com/theandrew168/jamql/internal/core"
 )
 
 var (
@@ -21,7 +23,7 @@ type Query struct {
 	Year   string
 }
 
-// Converts a slice of filter.Filters into a Query.
+// Converts a slice of core.Filter into a Query.
 //
 // The current behavior is to use the last value provided for a given field.
 // This means that if multiple filters with FilterKey == Artist were offered,
@@ -29,7 +31,7 @@ type Query struct {
 //
 // This function treats Equal and Contain the same because further
 // filtering is expected to be performed somewhere down the line.
-func NewQuery(filters []Filter) Query {
+func NewQuery(filters []core.Filter) Query {
 	var q Query
 	for _, filter := range filters {
 		switch filter.Key {

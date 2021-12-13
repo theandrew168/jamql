@@ -1,50 +1,51 @@
-package core_test
+package spotify_test
 
 import (
 	"testing"
 
 	"github.com/theandrew168/jamql/internal/core"
+	"github.com/theandrew168/jamql/internal/spotify"
 )
 
 func TestQueryBuild(t *testing.T) {
 	tests := []struct {
 		name  string
-		query core.Query
+		query spotify.Query
 		want  string
 	}{
 		{
 			"Name",
-			core.Query{Name: "Late"},
+			spotify.Query{Name: "Late"},
 			`track:"Late"`,
 		},
 		{
 			"Artist",
-			core.Query{Artist: "Ben Folds"},
+			spotify.Query{Artist: "Ben Folds"},
 			`artist:"Ben Folds"`,
 		},
 		{
 			"Album",
-			core.Query{Album: "Songs for Silverman"},
+			spotify.Query{Album: "Songs for Silverman"},
 			`album:"Songs for Silverman"`,
 		},
 		{
 			"Genre",
-			core.Query{Genre: "country"},
+			spotify.Query{Genre: "country"},
 			`genre:"country"`,
 		},
 		{
 			"Year",
-			core.Query{Year: "2000"},
+			spotify.Query{Year: "2000"},
 			`year:2000`,
 		},
 		{
 			"YearRange",
-			core.Query{Year: "2000-2010"},
+			spotify.Query{Year: "2000-2010"},
 			`year:2000-2010`,
 		},
 		{
 			"Multiple",
-			core.Query{
+			spotify.Query{
 				Artist: "Ben Folds",
 				Album:  "Songs for Silverman",
 			},
@@ -119,7 +120,7 @@ func TestNewQuery(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			q := core.NewQuery(tt.filters).String()
+			q := spotify.NewQuery(tt.filters).String()
 			if q != tt.want {
 				t.Errorf("want %q; got %q", tt.want, q)
 			}
