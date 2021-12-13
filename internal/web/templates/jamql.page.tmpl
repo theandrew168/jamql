@@ -5,17 +5,34 @@
 	<div class="jamql">
 		<!-- TODO: flash error -->
 		<!-- TODO: flash success -->
+
 		<form id="filters">
-			<!-- TODO: filter boxes -->
+			<!-- filter boxes -->
 			{{range .}}
 				{{template "filter" .}}
 			{{end}}
 
-			<!-- TODO: add filter button -->
-			<!-- TODO: save / search buttons -->
+			<!-- add filter button -->
+			<div class="filter-add">
+				<button class="filter-add-button" type="button">Add Filter</button>
+			</div>
+
+			<!-- save / search buttons -->
+			<div class="save-search">
+				<button class="button inactive" type="button">
+					<span>Save</span>
+				</button>
+				<button class="button active" type="button">
+					<span>Search</span>
+				</button>
+			</div>
 		</form>
-		<!-- TODO: no tracks placeholder -->
-		<!-- TODO: track cards -->
+
+		<!-- no tracks placeholder -->
+		<div class="no-tracks">
+			<p>Search to see some tracks!</p>
+		</div>
+
 	</div>
 </div>
 {{end}}

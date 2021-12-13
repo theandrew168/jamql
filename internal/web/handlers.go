@@ -43,9 +43,6 @@ func (app *Application) handleJamQL(w http.ResponseWriter, r *http.Request) {
 	}{
 		{1, false},
 		{2, true},
-		{3, true},
-		{4, true},
-		{5, true},
 	}
 
 	err = ts.Execute(w, data)

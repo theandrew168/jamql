@@ -29,7 +29,7 @@ h5 {
 	line-height: 1.2;
 }
 
-html, body {
+html, body, main {
 	height: 100%;
 }
 
@@ -175,4 +175,97 @@ html, body {
 	font-weight: 900;
 	text-align: center;
 	color: #ffffff;
+}
+
+.filter-add {
+	text-align: center;
+}
+
+.filter-add .filter-add-button {
+	color: #363636;
+	margin: 15px;
+	background: #ffffff;
+	border: 2px solid #dbdbdb;
+	border-radius: 100000px;
+	padding: 10px 30px;
+	font-size: 1.2rem;
+}
+
+.filter-add .filter-add-button:hover {
+	border-color: #d0d1cd;
+	cursor: pointer;
+}
+
+.filter-add .filter-add-button:active {
+	border-color: #757763
+}
+
+.save-search {
+	margin: 15px 20px;
+	display: flex;
+}
+
+.save-search .button {
+	flex: 1 1 auto;
+
+	font-size: 1.2rem;
+	width: 40%;
+	color: #ffffff;
+	margin: 15px;
+	background: #fa7c91;
+	border: none;
+	border-radius: 4px;
+	padding: 10px 20px;
+}
+
+.save-search .button.active:hover {
+	background: #fa7087;
+	cursor: pointer;
+}
+
+.save-search .button.inactive {
+	background: #d0d0d0;
+}
+
+.no-tracks {
+	border-radius: 8px;
+	padding: 15px 10px;
+	margin: 15px;
+	text-align: center;
+	color: #afafaf;
+	font-size: 1.5rem;
+	border: 2px dashed #afafaf;
+}
+
+.track-box {
+	background: white;
+	border-radius: 8px;
+	box-shadow: 0px 0px 8px rgba(0,0,0,0.25);
+	padding: 10px;
+	margin: 15px;
+
+	display: flex;
+	align-items: flex-start;
+}
+
+.track-box .track-artwork {
+	min-width: 64px;
+}
+
+.track-box .track-info {
+	text-align: left;
+	margin-left: 10px;
+}
+
+.track-box .track-info .title {
+	font-size: 1.5rem;
+	font-weight: 700;
+	padding-top: 0;
+	margin: 0;
+}
+
+.track-box .track-info .subtitle {
+	color: #8a4d76;
+	font-size: 1rem;
+	padding: 0;
 }
