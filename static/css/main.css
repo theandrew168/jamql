@@ -1,0 +1,75 @@
+@font-face {
+	font-family: "Nunito";
+	font-style: normal;
+	font-weight: normal;
+	src: url("/static/font/nunito/Nunito-Regular.ttf") format("truetype");
+}
+
+@font-face {
+	font-family: "Nunito";
+	font-style: normal;
+	font-weight: bold;
+	src: url("/static/font/nunito/Nunito-Bold.ttf") format("truetype");
+}
+
+html {
+	box-sizing: border-box;
+	font-family: "Nunito", sans-serif;
+	font-weight: 400;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	line-height: 1.6;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+	line-height: 1.2;
+}
+
+html, body {
+	height: 100%;
+}
+
+.home-bg {
+	background: #8a4d76;
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+}
+
+.home {
+	position: fixed;
+	top: 45%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	text-align: center;
+}
+
+.home .title {
+	margin: 0;
+	font-size: 6rem;
+	margin: 5px 0px;
+	color: #fff;
+}
+
+.home .login {
+	line-height: 2.5rem;
+	font-size: 1.5rem;
+	padding: 10px 20px;
+	text-decoration: none;
+
+	background: #fff;
+	border: none;
+	border-radius: 4px;
+	color: #8a4d76;
+}
+
+.home .login:hover {
+	background: #eee;
+	cursor: pointer;
+}
