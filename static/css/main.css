@@ -73,3 +73,106 @@ html, body {
 	background: #eee;
 	cursor: pointer;
 }
+
+.jamql-bg {
+	background-color: #eff0eb;
+	min-height: 100%;
+	padding-top: 15px;
+	padding-bottom: 15px;
+}
+
+.jamql {
+	min-width: 400px;
+	max-width: 800px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.filter-box {
+	background: #8a4d76;
+	border-radius: 8px;
+	padding: 10px;
+	margin: 0 15px 20px 15px;
+}
+
+.filter-box .filter-row {
+	display: flex;
+}
+
+.filter-box .filter-row .select,
+.filter-box .filter-row .input {
+	background-color: white;
+	border-color: transparent;
+	border-radius: 4px;
+	display: inline-block;
+	font: inherit;
+	padding: 0.5em 3.5em 0.5em 1em;
+}
+
+.filter-box .filter-row .select {
+	margin: 5px;
+	flex: 1 1 auto;
+
+	background-image:
+		linear-gradient(45deg, transparent 50%, gray 50%),
+		linear-gradient(135deg, gray 50%, transparent 50%),
+		linear-gradient(to right, #ccc, #ccc);
+	background-position:
+		calc(100% - 20px) calc(1em + 2px),
+		calc(100% - 15px) calc(1em + 2px),
+		calc(100% - 2.5em) 0.5em;
+	background-size:
+		5px 5px,
+		5px 5px,
+		1px 1.5em;
+	background-repeat: no-repeat;
+
+	-webkit-appearance: none;
+	-moz-appearance: none;
+}
+
+.filter-box .filter-row .select:hover {
+	border-color: #d0d1cd;
+	cursor: pointer;
+}
+
+.filter-box .filter-row .input {
+	flex: 1 1 auto;
+	margin: 5px;
+	min-width: 50px;
+}
+
+.filter-box .filter-row .input:hover {
+	border-color: #d0d1cd;
+}
+
+.filter-box .filter-row .between-and {
+	color: #fff;
+	font-weight: 700;
+	vertical-align: middle;
+	margin: 0 10px;
+	padding-top: 15px;
+}
+
+.filter-box .filter-row .button {
+	margin: 5px;
+	flex: 0 1 auto;
+
+	display: inline-block;
+	border-color: transparent;
+	border-radius: 4px;
+	background-color: #f14668;
+	padding: 0px 12px;
+}
+
+.filter-box .filter-row .button:hover {
+	background-color: #f03a5f;
+	cursor: pointer;
+}
+
+.filter-box .filter-row .button .icon {
+	font-size: 1.2rem;
+	font-weight: 900;
+	text-align: center;
+	color: #ffffff;
+}

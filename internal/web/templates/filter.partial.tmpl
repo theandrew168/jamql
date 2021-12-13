@@ -1,0 +1,25 @@
+{{define "filter"}}
+<div class="filter-box">
+	<div class="filter-row">
+		<select name="filter-key-{{.ID}}" class="select">
+			<option value="name">Name</option>
+			<option value="artist" selected>Artist</option>
+			<option value="album">Album</option>
+			<option value="genre">Genre</option>
+			<option value="year">Year</option>
+		</select>
+		<select name="filter-op-{{.ID}}" class="select">
+			<option value="equals" selected>Equals</option>
+			<option>Contains</option>
+			<!-- show text "Contains" for all filterKeys except "year" -->
+			<!-- <option>Between</option> -->
+		</select>
+	</div>
+	<div class="filter-row">
+		<input name="filter-value-{{.ID}}" class="input" type="text" placeholder="Filter..." />
+		<button class="button" type="button">
+			<span class="icon">X</span>
+		</button>
+	</div>
+</div>
+{{end}}

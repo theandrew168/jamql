@@ -1,0 +1,21 @@
+{{template "base" .}}
+
+{{define "main"}}
+<div class="jamql-bg">
+	<div class="jamql">
+		<!-- TODO: flash error -->
+		<!-- TODO: flash success -->
+		<form id="filters">
+			<!-- TODO: filter boxes -->
+			{{range .}}
+				{{template "filter" .}}
+			{{end}}
+
+			<!-- TODO: add filter button -->
+			<!-- TODO: save / search buttons -->
+		</form>
+		<!-- TODO: no tracks placeholder -->
+		<!-- TODO: track cards -->
+	</div>
+</div>
+{{end}}

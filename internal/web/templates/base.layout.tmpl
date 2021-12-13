@@ -1,8 +1,9 @@
+{{define "base"}}
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-	<title>JamQL</title>
+	<title>JamQL - Smart playlists for Spotify</title>
 
 	<meta charset="utf-8" />
 	<meta name="description" content="JamQL - Programmatic Playlists for Spotify" />
@@ -15,19 +16,10 @@
 </head>
 
 <body>
-	<div class="jamql-bg">
-		<div class="jamql">
-			<!-- TODO: flash error -->
-			<!-- TODO: flash success -->
-			<form id="filters">
-				<!-- TODO: filter boxes -->
-				<!-- TODO: add filter button -->
-				<!-- TODO: save / search buttons -->
-			</form>
-			<!-- TODO: no tracks placeholder -->
-			<!-- TODO: track cards -->
-		</div>
-	</div>
+	<main>
+		{{template "main" .}}
+	</main>
 </body>
 
 </html>
+{{end}}
