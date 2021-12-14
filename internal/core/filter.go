@@ -99,12 +99,12 @@ var filterFuncs = map[string]map[string]filterFunc{
 
 // return a new slice of filtered tracks (doesn't mutate)
 func (f Filter) Apply(tracks []Track) []Track {
-	ops, ok := filterFuncs[f.Key]
+	ops, ok := filterFuncs[strings.ToLower(f.Key)]
 	if !ok {
 		return []Track{}
 	}
 
-	ff, ok := ops[f.Op]
+	ff, ok := ops[strings.ToLower(f.Op)]
 	if !ok {
 		return []Track{}
 	}

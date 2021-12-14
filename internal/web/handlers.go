@@ -2,10 +2,16 @@ package web
 
 import (
 	"bytes"
+	"errors"
+	"fmt"
 	"html/template"
 	"net/http"
 
-	"github.com/theandrew168/jamql/internal/test"
+	"github.com/theandrew168/jamql/internal/core"
+)
+
+var (
+	filterLimit = 1
 )
 
 func (app *Application) handleIndex(w http.ResponseWriter, r *http.Request) {
@@ -44,8 +50,7 @@ func (app *Application) handleJamQL(w http.ResponseWriter, r *http.Request) {
 		ID     int
 		Hidden bool
 	}{
-		{1, false},
-		{2, true},
+		{0, false},
 	}
 
 	err = ts.Execute(w, data)
@@ -56,8 +61,39 @@ func (app *Application) handleJamQL(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *Application) handleSearch(w http.ResponseWriter, r *http.Request) {
-	// TODO: read form data
-	// TODO: search for matching tracks
+	// parse form
+	err := r.ParseForm()
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	// convert form data into filters
+	var filters []core.Filter
+	for i := 0; i < filterLimit; i++ {
+		key := fmt.Sprintf("filter-key-%d", i)
+		op := fmt.Sprintf("filter-op-%d", i)
+		value := fmt.Sprintf("filter-value-%d", i)
+
+		filter := core.Filter{
+			Key:   r.PostFormValue(key),
+			Op:    r.PostFormValue(op),
+			Value: r.PostFormValue(value),
+		}
+		filters = append(filters, filter)
+	}
+
+	// search for matching tracks
+	tracks, err := app.storage.SearchTracks(r, filters)
+	if err != nil {
+		// redirect to /login if unauthorized (token expired)
+		if errors.Is(err, core.ErrUnauthorized) {
+			http.Redirect(w, r, "/login", 303)
+			return
+		}
+		app.serverErrorResponse(w, r, err)
+		return
+	}
 
 	ts, err := template.ParseFS(app.templates, "track.partial.tmpl")
 	if err != nil {
@@ -67,7 +103,7 @@ func (app *Application) handleSearch(w http.ResponseWriter, r *http.Request) {
 
 	// render tracks to a temp buffer
 	var buf bytes.Buffer
-	for _, track := range test.SampleTracks {
+	for _, track := range tracks {
 		err = ts.Execute(&buf, track)
 		if err != nil {
 			app.serverErrorResponse(w, r, err)
