@@ -54,6 +54,7 @@ func (app *Application) Router() http.Handler {
 	// TODO: /callback - stores access_token in a cookie (URL param)
 	r.Get("/", app.handleIndex)
 	r.Get("/jamql", app.handleJamQL) // TODO: require tok cookie, else redir to /login
+	r.Post("/search", app.handleSearch)
 
 	return r
 }

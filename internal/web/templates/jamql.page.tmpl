@@ -1,12 +1,20 @@
 {{template "base" .}}
 
+<!--
+TODO flash messages:
+error - empty filters
+error - on search
+error - on save
+success - on save
+-->
+
 {{define "main"}}
 <div class="jamql-bg">
 	<div class="jamql">
-		<!-- TODO: flash error -->
-		<!-- TODO: flash success -->
+		<!-- element for flash messages -->
+		<div id="flash"></div>
 
-		<form id="filters">
+		<form hx-post="/search" hx-target="#tracks" hx-swap="innerHTML">
 			<!-- filter boxes -->
 			{{range .}}
 				{{template "filter" .}}
@@ -22,15 +30,18 @@
 				<button class="button inactive" type="button">
 					<span>Save</span>
 				</button>
-				<button class="button active" type="button">
+				<button class="button active" type="submit">
 					<span>Search</span>
 				</button>
 			</div>
 		</form>
 
-		<!-- no tracks placeholder -->
-		<div class="no-tracks">
-			<p>Search to see some tracks!</p>
+		<!-- tracks -->
+		<div id="tracks">
+			<!-- no tracks placeholder -->
+			<div class="no-tracks">
+				<p>Search to see some tracks!</p>
+			</div>
 		</div>
 
 	</div>
