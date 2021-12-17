@@ -14,7 +14,7 @@ success - on save
 		<!-- element for flash messages -->
 		<div id="flash"></div>
 
-		<form hx-post="/search" hx-target="#tracks" hx-swap="innerHTML">
+		<form>
 			<!-- filter boxes -->
 			{{range .}}
 				{{template "filter" .}}
@@ -27,11 +27,11 @@ success - on save
 
 			<!-- save / search buttons -->
 			<div class="save-search">
-				<button class="button inactive" type="button">
-					<span>Save</span>
-				</button>
-				<button class="button active" type="submit">
+				<button class="button active" hx-post="/search" hx-swap="innerHTML" hx-target="#tracks">
 					<span>Search</span>
+				</button>
+				<button class="button inactive" hx-post="/save" hx-swap="innerHTML" hx-target="#flash">
+					<span>Save</span>
 				</button>
 			</div>
 		</form>

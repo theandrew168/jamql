@@ -50,11 +50,14 @@ func (app *Application) Router() http.Handler {
 	r.NotFound(app.notFoundResponse)
 	r.MethodNotAllowed(app.methodNotAllowedResponse)
 
+	r.Get("/", app.handleIndex)
 	// TODO: /login - redirect user to spotify authorize w/ ID, scope, etc
 	// TODO: /callback - stores access_token in a cookie (URL param)
-	r.Get("/", app.handleIndex)
-	r.Get("/jamql", app.handleJamQL) // TODO: require tok cookie, else redir to /login
+
+	// TODO: require tok cookie, else redir to /login
+	r.Get("/jamql", app.handleJamQL)
 	r.Post("/search", app.handleSearch)
+	r.Post("/save", app.handleSave)
 
 	return r
 }

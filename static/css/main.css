@@ -267,3 +267,49 @@ html, body, main {
 	font-size: 1rem;
 	padding: 0;
 }
+
+.flash-success {
+	border-radius: 8px;
+	padding: 10px;
+	margin: 15px;
+	margin-top: 0px;
+	text-align: center;
+	color: #fff;
+	font-size: 1.2rem;
+	background-color: hsl(141, 53%, 45%);
+	position: relative;
+}
+
+.flash-success .delete {
+	position: absolute;
+	right: 15px;
+	color: #fff;
+}
+
+.flash-success .delete:hover {
+	color: #d3d3d3;
+	cursor: pointer;
+}
+
+.flash-error {
+	border-radius: 8px;
+	padding: 10px;
+	margin: 15px;
+	margin-top: 0px;
+	text-align: center;
+	color: #fff;
+	font-size: 1.2rem;
+	background-color: hsl(348, 100%, 61%);
+	position: relative;
+}
+
+.flash-error .delete {
+	position: absolute;
+	right: 15px;
+	color: #fff;
+}
+
+.flash-error .delete:hover {
+	color: #d3d3d3;
+	cursor: pointer;
+}
