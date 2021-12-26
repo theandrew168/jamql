@@ -1,11 +1,17 @@
 {{template "base" .}}
 
 <!--
-TODO flash messages:
-error - empty filters
-error - on search
-error - on save
-success - on save
+
+TODO:
+
+dynamic number of filter boxes (add, remove)
+	show/hide, reset when hidden
+
+Save goes active after successful search
+	only success, no error + no empty
+
+Filter year Contains -> Between w/ 2 inputs
+
 -->
 
 {{define "main"}}
@@ -14,7 +20,7 @@ success - on save
 		<!-- element for flash messages -->
 		<div id="flash"></div>
 
-		<form>
+		<form x-data="{ saveReady: false }">
 			<!-- filter boxes -->
 			{{range .}}
 				{{template "filter" .}}
@@ -27,10 +33,10 @@ success - on save
 
 			<!-- save / search buttons -->
 			<div class="save-search">
-				<button class="button active" hx-post="/search" hx-swap="innerHTML" hx-target="#tracks">
+				<button class="button" hx-post="/search" hx-swap="innerHTML" hx-target="#tracks" hx-target-error="#flash" x-on:click="saveReady = true">
 					<span>Search</span>
 				</button>
-				<button class="button inactive" hx-post="/save" hx-swap="innerHTML" hx-target="#flash">
+				<button class="button" hx-post="/save" hx-swap="innerHTML" hx-target="#flash" hx-target-error="#flash" x-on:click="saveReady = false" x-bind:disabled="!saveReady">
 					<span>Save</span>
 				</button>
 			</div>

@@ -14,6 +14,7 @@ var (
 	filterLimit = 1
 )
 
+// uses regular error responses (user isn't at the main app yet)
 func (app *Application) handleIndex(w http.ResponseWriter, r *http.Request) {
 	files := []string{
 		"index.page.tmpl",
@@ -33,6 +34,7 @@ func (app *Application) handleIndex(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// uses regular error responses (user isn't at the main app yet)
 func (app *Application) handleJamQL(w http.ResponseWriter, r *http.Request) {
 	files := []string{
 		"jamql.page.tmpl",
@@ -60,11 +62,12 @@ func (app *Application) handleJamQL(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// uses flash messages for reporting errors
 func (app *Application) handleSearch(w http.ResponseWriter, r *http.Request) {
 	// parse form
 	err := r.ParseForm()
 	if err != nil {
-		app.serverErrorResponse(w, r, err)
+		app.serverErrorFlash(w, r, err)
 		return
 	}
 
@@ -92,12 +95,7 @@ func (app *Application) handleSearch(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if empty {
-		err = app.flashError(w, "Try filling in some filters first!")
-		if err != nil {
-			app.serverErrorResponse(w, r, err)
-			return
-		}
-
+		app.clientErrorFlash(w, r, "Try filling in some filters first!")
 		return
 	}
 
@@ -109,13 +107,13 @@ func (app *Application) handleSearch(w http.ResponseWriter, r *http.Request) {
 			http.Redirect(w, r, "/login", 303)
 			return
 		}
-		app.serverErrorResponse(w, r, err)
+		app.serverErrorFlash(w, r, err)
 		return
 	}
 
 	ts, err := template.ParseFS(app.templates, "track.partial.tmpl")
 	if err != nil {
-		app.serverErrorResponse(w, r, err)
+		app.serverErrorFlash(w, r, err)
 		return
 	}
 
@@ -124,7 +122,7 @@ func (app *Application) handleSearch(w http.ResponseWriter, r *http.Request) {
 	for _, track := range tracks {
 		err = ts.Execute(&buf, track)
 		if err != nil {
-			app.serverErrorResponse(w, r, err)
+			app.serverErrorFlash(w, r, err)
 			return
 		}
 	}
@@ -133,11 +131,12 @@ func (app *Application) handleSearch(w http.ResponseWriter, r *http.Request) {
 	w.Write(buf.Bytes())
 }
 
+// uses flash messages for reporting errors
 func (app *Application) handleSave(w http.ResponseWriter, r *http.Request) {
 	// parse form
 	err := r.ParseForm()
 	if err != nil {
-		app.serverErrorResponse(w, r, err)
+		app.serverErrorFlash(w, r, err)
 		return
 	}
 
@@ -164,48 +163,27 @@ func (app *Application) handleSave(w http.ResponseWriter, r *http.Request) {
 			http.Redirect(w, r, "/login", 303)
 			return
 		}
-		app.serverErrorResponse(w, r, err)
+		app.serverErrorFlash(w, r, err)
 		return
 	}
 
 	// save tracks to a new playlist
 	err = app.storage.SaveTracks(r, tracks, "TODO Title", "TODO Description")
 	if err != nil {
-		app.serverErrorResponse(w, r, err)
+		app.serverErrorFlash(w, r, err)
 		return
 	}
 
-	err = app.flashSuccess(w, "Playlist created!")
-	if err != nil {
-		app.serverErrorResponse(w, r, err)
-		return
-	}
-}
-
-func (app *Application) flashSuccess(w http.ResponseWriter, message string) error {
 	ts, err := template.ParseFS(app.templates, "flash-success.partial.tmpl")
 	if err != nil {
-		return err
+		app.serverErrorFlash(w, r, err)
+		return
 	}
 
+	message := "Playlist created!"
 	err = ts.Execute(w, message)
 	if err != nil {
-		return err
+		app.serverErrorFlash(w, r, err)
+		return
 	}
-
-	return nil
-}
-
-func (app *Application) flashError(w http.ResponseWriter, message string) error {
-	ts, err := template.ParseFS(app.templates, "flash-error.partial.tmpl")
-	if err != nil {
-		return err
-	}
-
-	err = ts.Execute(w, message)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }

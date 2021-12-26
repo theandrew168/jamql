@@ -28,6 +28,7 @@ h5 {
 }
 
 html, body, main {
+	background-color: #eff0eb;
 	height: 100%;
 }
 
@@ -73,7 +74,6 @@ html, body, main {
 }
 
 .jamql-bg {
-	background-color: #eff0eb;
 	min-height: 100%;
 	padding-top: 15px;
 	padding-bottom: 15px;
@@ -216,13 +216,14 @@ html, body, main {
 	padding: 10px 20px;
 }
 
-.save-search .button.active:hover {
+.save-search .button:hover {
 	background: #fa7087;
 	cursor: pointer;
 }
 
-.save-search .button.inactive {
+.save-search .button:disabled {
 	background: #d0d0d0;
+	cursor: default;
 }
 
 .no-tracks {
