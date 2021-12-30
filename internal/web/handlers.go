@@ -3,7 +3,7 @@ package web
 import (
 	"bytes"
 	"errors"
-	"fmt"
+//	"fmt"
 	"html/template"
 	"net/http"
 
@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	filterLimit = 1
+	filterLimit = 3
 )
 
 // uses regular error responses (user isn't at the main app yet)
@@ -48,11 +48,10 @@ func (app *Application) handleJamQL(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data := []struct {
-		ID     int
-		Hidden bool
-	}{
-		{0, false},
+	data := []bool{
+		false,
+		true,
+		true,
 	}
 
 	err = ts.Execute(w, data)
@@ -71,30 +70,44 @@ func (app *Application) handleSearch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	keys := r.PostForm["filter-key"]
+	ops := r.PostForm["filter-op"]
+	values1 := r.PostForm["filter-value-1"]
+	values2 := r.PostForm["filter-value-2"]
+
+	app.logger.Println(len(keys))
+	app.logger.Println(keys)
+	app.logger.Println(len(ops))
+	app.logger.Println(ops)
+	app.logger.Println(len(values1))
+	app.logger.Println(values1)
+	app.logger.Println(len(values2))
+	app.logger.Println(values2)
+
+	// TODO: rebuild filters from form data, add a helper func
+
 	// convert form data into filters
 	var filters []core.Filter
 	for i := 0; i < filterLimit; i++ {
-		key := fmt.Sprintf("filter-key-%d", i)
-		op := fmt.Sprintf("filter-op-%d", i)
-		value := fmt.Sprintf("filter-value-%d", i)
-
-		filter := core.Filter{
-			Key:   r.PostFormValue(key),
-			Op:    r.PostFormValue(op),
-			Value: r.PostFormValue(value),
-		}
-		filters = append(filters, filter)
+//		key := fmt.Sprintf("filter-key-%d", i)
+//		op := fmt.Sprintf("filter-op-%d", i)
+//		value := fmt.Sprintf("filter-value-%d", i)
+//
+//		// skip filters with empty values
+//		if r.PostFormValue(value) == "" {
+//			continue
+//		}
+//
+//		filter := core.Filter{
+//			Key:   r.PostFormValue(key),
+//			Op:    r.PostFormValue(op),
+//			Value: r.PostFormValue(value),
+//		}
+//		filters = append(filters, filter)
 	}
 
 	// handle empty filters
-	empty := true
-	for _, filter := range filters {
-		if filter.Value != "" {
-			empty = false
-		}
-	}
-
-	if empty {
+	if len(filters) == 0 {
 		app.clientErrorFlash(w, r, "Try filling in some filters first!")
 		return
 	}
@@ -142,18 +155,18 @@ func (app *Application) handleSave(w http.ResponseWriter, r *http.Request) {
 
 	// convert form data into filters
 	var filters []core.Filter
-	for i := 0; i < filterLimit; i++ {
-		key := fmt.Sprintf("filter-key-%d", i)
-		op := fmt.Sprintf("filter-op-%d", i)
-		value := fmt.Sprintf("filter-value-%d", i)
-
-		filter := core.Filter{
-			Key:   r.PostFormValue(key),
-			Op:    r.PostFormValue(op),
-			Value: r.PostFormValue(value),
-		}
-		filters = append(filters, filter)
-	}
+//	for i := 0; i < filterLimit; i++ {
+//		key := fmt.Sprintf("filter-key-%d", i)
+//		op := fmt.Sprintf("filter-op-%d", i)
+//		value := fmt.Sprintf("filter-value-%d", i)
+//
+//		filter := core.Filter{
+//			Key:   r.PostFormValue(key),
+//			Op:    r.PostFormValue(op),
+//			Value: r.PostFormValue(value),
+//		}
+//		filters = append(filters, filter)
+//	}
 
 	// search for matching tracks
 	tracks, err := app.storage.SearchTracks(r, filters)
