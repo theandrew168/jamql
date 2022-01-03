@@ -39,7 +39,6 @@ func (app *Application) handleJamQL(w http.ResponseWriter, r *http.Request) {
 	files := []string{
 		"jamql.page.tmpl",
 		"base.layout.tmpl",
-		"filter.partial.tmpl",
 	}
 
 	ts, err := template.ParseFS(app.templates, files...)
@@ -137,6 +136,12 @@ func (app *Application) handleSearch(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		app.serverErrorFlash(w, r, err)
+		return
+	}
+
+	// handle no matching tracks
+	if len(tracks) == 0 {
+		app.clientErrorFlash(w, r, "No tracks match these filters!")
 		return
 	}
 

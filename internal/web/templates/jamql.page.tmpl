@@ -4,9 +4,6 @@
 
 TODO:
 
-dynamic number of filter boxes (add, remove)
-	show/hide, reset when hidden
-
 save goes active after successful search
 	only success, no error + no empty
 
@@ -20,15 +17,62 @@ clear error flash upon success? or upon button click?
 		<!-- element for flash messages -->
 		<div id="flash"></div>
 
-		<form x-data="{ saveReady: false }">
+		<form x-data="{
+			saveReady: false,
+			filters: [0, 1, 2],
+			addFilter() {
+				if (this.filters.length >= 5) {
+					return;
+				}
+				for (let i = 0; i < 5; i++) {
+					if (!this.filters.includes(i)) {
+						console.log('add', i);
+						this.filters.push(i);
+						return;
+					}
+				}
+			},
+			removeFilter(idx) {
+				console.log('remove', idx);
+				this.filters.splice(idx, 1);
+			},
+		}">
+
 			<!-- filter boxes -->
-			{{range .}}
-				{{template "filter" .}}
-			{{end}}
+			<template x-for="filter in filters" x-bind:key="filter">
+				<div x-data="{ key: '', op: '' }" class="filter-box">
+					<div class="filter-row">
+						<select x-model="key" x-bind:name="'filter-key-' + filter" class="select">
+							<option value="name">Name</option>
+							<option value="artist" selected>Artist</option>
+							<option value="album">Album</option>
+							<option value="genre">Genre</option>
+							<option value="year">Year</option>
+						</select>
+						<select x-model="op" x-bind:name="`filter-op-` + filter" class="select">
+							<option value="equals" selected>Equals</option>
+							<option x-text="key == 'year' ? 'Between' : 'Contains'" value="contains">Contains</option>
+						</select>
+					</div>
+					<div class="filter-row">
+						<input x-bind:name="'filter-value1-' + filter" class="input" type="text" placeholder="Filter..." />
+						<p
+							x-show="key == 'year' && op == 'contains'"
+							class="between-and">and</p>
+						<input
+							x-show="key == 'year' && op == 'contains'"
+							x-bind:name="'filter-value2-' + filter"
+							class="input" type="text" placeholder="Filter..." />
+						<button x-on:click="removeFilter(filters.indexOf(filter))" class="button" type="button">
+							<span class="icon">X</span>
+						</button>
+					</div>
+				</div>
+			</template>
 
 			<!-- add filter button -->
-			<div class="filter-add">
-				<button class="filter-add-button" type="button">Add Filter</button>
+			<div x-show="filters.length < 5" class="filter-add">
+				<button x-on:click="addFilter()" class="filter-add-button" type="button">Add Filter</button>
 			</div>
 
 			<!-- save / search buttons -->
