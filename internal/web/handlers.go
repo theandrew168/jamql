@@ -3,7 +3,7 @@ package web
 import (
 	"bytes"
 	"errors"
-//	"fmt"
+	"fmt"
 	"html/template"
 	"net/http"
 
@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	filterLimit = 3
+	filterCount = 3
 )
 
 // uses regular error responses (user isn't at the main app yet)
@@ -48,10 +48,14 @@ func (app *Application) handleJamQL(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data := []bool{
-		false,
-		true,
-		true,
+	// TODO: loop range filterCount
+	data := []struct {
+		ID     int
+		Hidden bool
+	}{
+		{0, false},
+		{1, true},
+		{2, true},
 	}
 
 	err = ts.Execute(w, data)
@@ -59,6 +63,52 @@ func (app *Application) handleJamQL(w http.ResponseWriter, r *http.Request) {
 		app.serverErrorResponse(w, r, err)
 		return
 	}
+}
+
+// be sure to call r.ParseForm() before using this helper
+func parseFiltersForm(r *http.Request) []core.Filter {
+	var filters []core.Filter
+	for i := 0; i < filterCount; i++ {
+		keyName := fmt.Sprintf("filter-key-%d", i)
+		opName := fmt.Sprintf("filter-op-%d", i)
+		value1Name := fmt.Sprintf("filter-value1-%d", i)
+		value2Name := fmt.Sprintf("filter-value2-%d", i)
+
+		key := r.PostFormValue(keyName)
+		op := r.PostFormValue(opName)
+		value1 := r.PostFormValue(value1Name)
+		value2 := r.PostFormValue(value2Name)
+
+		// flip "year contains" to "year between"
+		if key == "year" && op == "contains" {
+			op = "between"
+		}
+
+		// ignore filters with missing fields
+		if value1 == "" {
+			continue
+		}
+		if key == "year" && op == "between" && value2 == "" {
+			continue
+		}
+
+		// rebuild "year between" value if necessary
+		var value string
+		if key == "year" && op == "between" {
+			value = value1 + "-" + value2
+		} else {
+			value = value1
+		}
+
+		filter := core.Filter{
+			Key:   key,
+			Op:    op,
+			Value: value,
+		}
+		filters = append(filters, filter)
+	}
+
+	return filters
 }
 
 // uses flash messages for reporting errors
@@ -70,41 +120,7 @@ func (app *Application) handleSearch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	keys := r.PostForm["filter-key"]
-	ops := r.PostForm["filter-op"]
-	values1 := r.PostForm["filter-value-1"]
-	values2 := r.PostForm["filter-value-2"]
-
-	app.logger.Println(len(keys))
-	app.logger.Println(keys)
-	app.logger.Println(len(ops))
-	app.logger.Println(ops)
-	app.logger.Println(len(values1))
-	app.logger.Println(values1)
-	app.logger.Println(len(values2))
-	app.logger.Println(values2)
-
-	// TODO: rebuild filters from form data, add a helper func
-
-	// convert form data into filters
-	var filters []core.Filter
-	for i := 0; i < filterLimit; i++ {
-//		key := fmt.Sprintf("filter-key-%d", i)
-//		op := fmt.Sprintf("filter-op-%d", i)
-//		value := fmt.Sprintf("filter-value-%d", i)
-//
-//		// skip filters with empty values
-//		if r.PostFormValue(value) == "" {
-//			continue
-//		}
-//
-//		filter := core.Filter{
-//			Key:   r.PostFormValue(key),
-//			Op:    r.PostFormValue(op),
-//			Value: r.PostFormValue(value),
-//		}
-//		filters = append(filters, filter)
-	}
+	filters := parseFiltersForm(r)
 
 	// handle empty filters
 	if len(filters) == 0 {
@@ -153,20 +169,7 @@ func (app *Application) handleSave(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// convert form data into filters
-	var filters []core.Filter
-//	for i := 0; i < filterLimit; i++ {
-//		key := fmt.Sprintf("filter-key-%d", i)
-//		op := fmt.Sprintf("filter-op-%d", i)
-//		value := fmt.Sprintf("filter-value-%d", i)
-//
-//		filter := core.Filter{
-//			Key:   r.PostFormValue(key),
-//			Op:    r.PostFormValue(op),
-//			Value: r.PostFormValue(value),
-//		}
-//		filters = append(filters, filter)
-//	}
+	filters := parseFiltersForm(r)
 
 	// search for matching tracks
 	tracks, err := app.storage.SearchTracks(r, filters)
