@@ -17,9 +17,10 @@ document.body.addEventListener("htmx:beforeRequest", function(evt) {
 	htmx.find("#save-button").disabled = true;
 });
 
-// enable save button after successful requests
+// enable save button after successful searches
 document.body.addEventListener("htmx:afterRequest", function(evt) {
-	if (evt.detail.successful) {
+	let path = evt.detail.requestConfig.path;
+	if (evt.detail.successful && path == "/search") {
 		htmx.find("#save-button").disabled = false;
 	}
 });
