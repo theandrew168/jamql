@@ -7,8 +7,6 @@ TODO:
 save goes active after successful search
 	only success, no error + no empty
 
-clear error flash upon success? or upon button click?
-
 -->
 
 {{define "main"}}
@@ -58,9 +56,11 @@ clear error flash upon success? or upon button click?
 						<input x-bind:name="'filter-value1-' + filter" class="input" type="text" placeholder="Filter..." />
 						<p
 							x-show="key == 'year' && op == 'contains'"
+							x-transition
 							class="between-and">and</p>
 						<input
 							x-show="key == 'year' && op == 'contains'"
+							x-transition
 							x-bind:name="'filter-value2-' + filter"
 							class="input" type="text" placeholder="Filter..." />
 						<button x-on:click="removeFilter(filters.indexOf(filter))" class="button" type="button">

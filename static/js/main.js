@@ -4,6 +4,7 @@
 //
 // set isError to false to avoid error logging in console
 document.body.addEventListener("htmx:beforeSwap", function(evt) {
+	htmx.find("#flash").innerHTML = "";
 	if (evt.detail.isError) {
 		evt.detail.isError = false;
 		evt.detail.shouldSwap = true;
