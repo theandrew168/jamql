@@ -1,5 +1,10 @@
-<div class="flash-success" x-data="{ open: true }" x-show="open">
-	<span class="delete" x-on:click="open = false">X</span>
+<div
+	x-data="{ open: true }"
+	x-show="open"
+	class="flash-success">
+	<span
+		x-on:click="open = false"
+		class="delete">X</span>
 	<strong>Success!</strong>
 	<span>{{.}}</span>
 </div>

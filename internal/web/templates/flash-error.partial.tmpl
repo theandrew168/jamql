@@ -1,5 +1,10 @@
-<div class="flash-error" x-data="{ open: true }" x-show="open">
-	<span class="delete" x-on:click="open = false">X</span>
+<div
+	x-data="{ open: true }"
+	x-show="open"
+	class="flash-error">
+	<span
+		x-on:click="open = false"
+		class="delete">X</span>
 	<strong>Error!</strong>
 	<span>{{.}}</span>
 </div>

@@ -3,9 +3,8 @@
 <!--
 
 TODO:
-
-save goes active after successful search
-	only success, no error + no empty
+save goes active after _successful_ search
+save goes inactive after _any_ save
 
 -->
 
@@ -15,45 +14,58 @@ save goes active after successful search
 		<!-- element for flash messages -->
 		<div id="flash"></div>
 
+		<!-- dynamic filters form -->
 		<form x-data="{
-			saveReady: false,
-			filters: [0, 1, 2],
+			filters: [0, 1],
+			filterCount: {{.FilterCount}},
 			addFilter() {
-				if (this.filters.length >= 5) {
+				if (this.filters.length >= this.filterCount) {
 					return;
 				}
-				for (let i = 0; i < 5; i++) {
+				for (let i = 0; i < this.filterCount; i++) {
 					if (!this.filters.includes(i)) {
-						console.log('add', i);
 						this.filters.push(i);
 						return;
 					}
 				}
 			},
 			removeFilter(idx) {
-				console.log('remove', idx);
 				this.filters.splice(idx, 1);
 			},
 		}">
 
 			<!-- filter boxes -->
-			<template x-for="filter in filters" x-bind:key="filter">
-				<div x-data="{ key: '', op: '' }" class="filter-box">
+			<template
+				x-for="filter in filters"
+				x-bind:key="filter">
+				<div
+					x-data="{ key: '', op: '' }"
+					class="filter-box">
 					<div class="filter-row">
-						<select x-model="key" x-bind:name="'filter-key-' + filter" class="select">
+						<select
+							x-model="key"
+							x-bind:name="'filter-key-' + filter"
+							class="select">
 							<option value="name">Name</option>
 							<option value="artist" selected>Artist</option>
 							<option value="album">Album</option>
 							<option value="genre">Genre</option>
 							<option value="year">Year</option>
 						</select>
-						<select x-model="op" x-bind:name="`filter-op-` + filter" class="select">
+						<select
+							x-model="op"
+							x-bind:name="`filter-op-` + filter"
+							class="select">
 							<option value="equals" selected>Equals</option>
-							<option x-text="key == 'year' ? 'Between' : 'Contains'" value="contains">Contains</option>
+							<option
+								x-text="key == 'year' ? 'Between' : 'Contains'"
+								value="contains">Contains</option>
 						</select>
 					</div>
 					<div class="filter-row">
-						<input x-bind:name="'filter-value1-' + filter" class="input" type="text" placeholder="Filter..." />
+						<input
+							x-bind:name="'filter-value1-' + filter"
+							class="input" type="text" placeholder="Filter..." />
 						<p
 							x-show="key == 'year' && op == 'contains'"
 							x-transition
@@ -63,7 +75,9 @@ save goes active after successful search
 							x-transition
 							x-bind:name="'filter-value2-' + filter"
 							class="input" type="text" placeholder="Filter..." />
-						<button x-on:click="removeFilter(filters.indexOf(filter))" class="button" type="button">
+						<button
+							x-on:click="removeFilter(filters.indexOf(filter))"
+							class="button" type="button">
 							<span class="icon">X</span>
 						</button>
 					</div>
@@ -71,16 +85,29 @@ save goes active after successful search
 			</template>
 
 			<!-- add filter button -->
-			<div x-show="filters.length < 5" class="filter-add">
-				<button x-on:click="addFilter()" class="filter-add-button" type="button">Add Filter</button>
+			<div class="filter-add">
+				<button
+					x-bind:disabled="filters.length >= filterCount"
+					x-on:click="addFilter()"
+					class="filter-add-button" type="button">Add Filter</button>
 			</div>
 
 			<!-- save / search buttons -->
 			<div class="save-search">
-				<button class="button" hx-post="/search" hx-swap="innerHTML" hx-target="#tracks" hx-target-error="#flash" x-on:click="saveReady = true">
+				<button
+					hx-post="/search"
+					hx-target="#tracks"
+					hx-target-error="#flash"
+					hx-swap="innerHTML"
+					class="button">
 					<span>Search</span>
 				</button>
-				<button class="button" hx-post="/save" hx-swap="innerHTML" hx-target="#flash" hx-target-error="#flash" x-on:click="saveReady = false" x-bind:disabled="!saveReady">
+				<button
+					hx-post="/save"
+					hx-target="#flash"
+					hx-target-error="#flash"
+					hx-swap="innerHTML"
+					class="button" id="save-button" disabled>
 					<span>Save</span>
 				</button>
 			</div>

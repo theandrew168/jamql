@@ -210,8 +210,11 @@ html, body, main {
 	cursor: pointer;
 }
 
-.filter-add .filter-add-button:active {
-	border-color: #757763
+.filter-add .filter-add-button:disabled {
+	color: #ffffff;
+	border-color: #d0d0d0;
+	background: #d0d0d0;
+	cursor: default;
 }
 
 .save-search {

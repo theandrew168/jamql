@@ -47,14 +47,10 @@ func (app *Application) handleJamQL(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// TODO: loop range filterCount
-	data := []struct {
-		ID     int
-		Hidden bool
+	data := struct {
+		FilterCount int
 	}{
-		{0, false},
-		{1, true},
-		{2, true},
+		filterCount,
 	}
 
 	err = ts.Execute(w, data)
@@ -176,6 +172,12 @@ func (app *Application) handleSave(w http.ResponseWriter, r *http.Request) {
 
 	filters := parseFiltersForm(r)
 
+	// handle empty filters
+	if len(filters) == 0 {
+		app.clientErrorFlash(w, r, "Try filling in some filters first!")
+		return
+	}
+
 	// search for matching tracks
 	tracks, err := app.storage.SearchTracks(r, filters)
 	if err != nil {
@@ -185,6 +187,12 @@ func (app *Application) handleSave(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		app.serverErrorFlash(w, r, err)
+		return
+	}
+
+	// handle no matching tracks
+	if len(tracks) == 0 {
+		app.clientErrorFlash(w, r, "No tracks match these filters!")
 		return
 	}
 
