@@ -66,7 +66,6 @@ html, body, main {
 }
 
 .home .title {
-	margin: 0;
 	font-size: 6rem;
 	margin: 5px 0px;
 	color: #fff;
@@ -91,8 +90,6 @@ html, body, main {
 
 .jamql-bg {
 	min-height: 100%;
-	padding-top: 15px;
-	padding-bottom: 15px;
 }
 
 .jamql {
@@ -100,6 +97,13 @@ html, body, main {
 	max-width: 800px;
 	margin-left: auto;
 	margin-right: auto;
+}
+
+.jamql .title {
+	text-align: center;
+	font-size: 4rem;
+	margin: 5px 0px;
+	color: #8a4d76;
 }
 
 .filter-box {
@@ -185,8 +189,8 @@ html, body, main {
 }
 
 .filter-box .filter-row .button .icon {
-	font-size: 1.2rem;
-	font-weight: 900;
+	width: 24px;
+	height: 24px;
 	text-align: center;
 	color: #ffffff;
 }
@@ -302,7 +306,10 @@ html, body, main {
 
 .flash-success .delete {
 	position: absolute;
+	top: 14px;
 	right: 15px;
+	width: 24px;
+	height: 24px;
 	color: #fff;
 }
 
@@ -325,7 +332,10 @@ html, body, main {
 
 .flash-error .delete {
 	position: absolute;
+	top: 14px;
 	right: 15px;
+	width: 24px;
+	height: 24px;
 	color: #fff;
 }
 
