@@ -63,11 +63,21 @@ func (app *Application) handleLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// redirect user to Spotify's login service
-//	authURL := "https://accounts.spotify.com/authorize"
 	values := url.Values{}
 	values.Set("response_type", "token")
 	values.Set("client_id", app.cfg.ClientID)
+	values.Set("scope", "playlist-modify-public")
+	values.Set("redirect_uri", app.cfg.RedirectURI)
 	values.Set("state", state)
+
+	authURL, err := url.Parse("https://accounts.spotify.com/authorize")
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	authURL.RawQuery = values.Encode()
+	app.logger.Println(authURL.String())
 }
 
 // stores access_token in a cookie (URL param)

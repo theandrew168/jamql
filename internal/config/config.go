@@ -10,6 +10,7 @@ import (
 
 var (
 	defaultPort = "5000"
+	defaultRedirectURI = "http://localhost:5000/callback"
 )
 
 type Config struct {
@@ -69,6 +70,9 @@ func Read(data string) (Config, error) {
 	// apply defaults
 	if cfg.Port == "" {
 		cfg.Port = defaultPort
+	}
+	if cfg.RedirectURI == "" {
+		cfg.RedirectURI = defaultRedirectURI
 	}
 
 	return cfg, nil
