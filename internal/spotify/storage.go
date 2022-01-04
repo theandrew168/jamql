@@ -1,18 +1,20 @@
-package test
+package spotify
 
 import (
 	"net/http"
+
+	"github.com/golangcollege/sessions"
 
 	"github.com/theandrew168/jamql/internal/core"
 )
 
 type storage struct {
-	tracks []core.Track
+	session *sessions.Session
 }
 
-func NewStorage() core.Storage {
+func NewStorage(session *sessions.Session) core.Storage {
 	s := storage{
-		tracks: SampleTracks,
+		session: session,
 	}
 	return &s
 }
@@ -23,16 +25,15 @@ func (s *storage) SearchTracks(r *http.Request, filters []core.Filter) ([]core.T
 		return []core.Track{}, nil
 	}
 
-	// apply each filter
-	tracks := s.tracks
-	for _, filter := range filters {
-		tracks = filter.Apply(tracks)
-	}
+//	// apply each filter
+//	tracks := s.tracks
+//	for _, filter := range filters {
+//		tracks = filter.Apply(tracks)
+//	}
 
-	return tracks, nil
+	return []core.Track{}, nil
 }
 
 func (s *storage) SaveTracks(r *http.Request, tracks []core.Track, name, desc string) error {
-	// mocking save is a no-op
 	return nil
 }

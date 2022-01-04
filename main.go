@@ -17,10 +17,13 @@ import (
 
 	"github.com/coreos/go-systemd/daemon"
 	"github.com/go-chi/chi/v5"
+	"github.com/golangcollege/sessions"
 	"github.com/klauspost/compress/gzhttp"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
 	"github.com/theandrew168/jamql/internal/config"
+	"github.com/theandrew168/jamql/internal/core"
+	"github.com/theandrew168/jamql/internal/spotify"
 	"github.com/theandrew168/jamql/internal/test"
 	"github.com/theandrew168/jamql/internal/web"
 )
@@ -34,23 +37,29 @@ var logo []byte
 func main() {
 	logger := log.New(os.Stdout, "", log.Lshortfile)
 
-	conf := flag.String("conf", "", "app config file")
+	conf := flag.String("conf", "jamql.conf", "app config file")
 	flag.Parse()
 
-	// all vars are optional so no conf file is required
-	var cfg config.Config
-	if *conf == "" {
-		cfg = config.Defaults()
-	} else {
-		var err error
-		cfg, err = config.ReadFile(*conf)
-		if err != nil {
-			logger.Fatalln(err)
-		}
+	cfg, err := config.ReadFile(*conf)
+	if err != nil {
+		logger.Fatalln(err)
 	}
 
-	storage := test.NewMockStorage(test.SampleTracks)
-	app := web.NewApplication(storage, logger)
+	// create and configure session storage
+	session := sessions.New([]byte(cfg.SecretKey))
+	session.Lifetime = 1 * time.Hour
+	session.HttpOnly = true
+	session.Secure = true
+
+	// use test storage when cfg.ClientID is unset
+	var storage core.Storage
+	if cfg.ClientID == "" {
+		storage = test.NewStorage()
+	} else {
+		storage = spotify.NewStorage(session)
+	}
+
+	app := web.NewApplication(cfg, storage, session, logger)
 
 	// setup http.Handler for static files
 	static, _ := fs.Sub(staticFS, "static")

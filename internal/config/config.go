@@ -1,7 +1,9 @@
 package config
 
 import (
+	"fmt"
 	"os"
+	"strings"
 
 	"github.com/BurntSushi/toml"
 )
@@ -11,24 +13,57 @@ var (
 )
 
 type Config struct {
-	SpotifyClientID     string `toml:"spotify_client_id"`
-	SpotifyClientSecret string `toml:"spotify_client_secret"`
+	SecretKey string `toml:"secret_key"`
 
-	Port string `toml:"port"`
-}
-
-func Defaults() Config {
-	cfg := Config{
-		Port: defaultPort,
-	}
-	return cfg
+	ClientID    string `toml:"client_id"`
+	RedirectURI string `toml:"redirect_uri"`
+	Port        string `toml:"port"`
 }
 
 func Read(data string) (Config, error) {
 	var cfg Config
-	_, err := toml.Decode(data, &cfg)
+	meta, err := toml.Decode(data, &cfg)
 	if err != nil {
 		return Config{}, nil
+	}
+
+	// gather extra values
+	extra := []string{}
+	for _, keys := range meta.Undecoded() {
+		key := keys[0]
+		extra = append(extra, key)
+	}
+
+	// error upon extra values
+	if len(extra) > 0 {
+		msg := strings.Join(extra, ", ")
+		return Config{}, fmt.Errorf("extra config values: %s", msg)
+	}
+
+	// build set of present config keys
+	present := make(map[string]bool)
+	for _, keys := range meta.Keys() {
+		key := keys[0]
+		present[key] = true
+	}
+
+	// list of required config values
+	required := []string{
+		"secret_key",
+	}
+
+	// gather missing values
+	missing := []string{}
+	for _, key := range required {
+		if _, ok := present[key]; !ok {
+			missing = append(missing, key)
+		}
+	}
+
+	// error upon missing values
+	if len(missing) > 0 {
+		msg := strings.Join(missing, ", ")
+		return Config{}, fmt.Errorf("missing config values: %s", msg)
 	}
 
 	// apply defaults

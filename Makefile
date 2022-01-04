@@ -10,7 +10,7 @@ build:
 
 .PHONY: run
 run:
-	go run main.go
+	ENV=dev go run main.go -conf internal/test/jamql.conf
 
 .PHONY: test
 test:
