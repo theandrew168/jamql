@@ -9,16 +9,21 @@ import (
 )
 
 var (
+	defaultSpotifyRedirectURI = "http://localhost:5000/callback"
 	defaultPort = "5000"
-	defaultRedirectURI = "http://localhost:5000/callback"
 )
 
 type Config struct {
+	// required
 	SecretKey string `toml:"secret_key"`
 
-	ClientID    string `toml:"client_id"`
-	RedirectURI string `toml:"redirect_uri"`
-	Port        string `toml:"port"`
+	// optional - spotify
+	SpotifyClientID     string `toml:"spotify_client_id"`
+	SpotifyClientSecret string `toml:"spotify_client_secret"`
+	SpotifyRedirectURI  string `toml:"spotify_redirect_uri"`
+
+	// optional - general
+	Port string `toml:"port"`
 }
 
 func Read(data string) (Config, error) {
@@ -71,8 +76,8 @@ func Read(data string) (Config, error) {
 	if cfg.Port == "" {
 		cfg.Port = defaultPort
 	}
-	if cfg.RedirectURI == "" {
-		cfg.RedirectURI = defaultRedirectURI
+	if cfg.SpotifyRedirectURI == "" {
+		cfg.SpotifyRedirectURI = defaultSpotifyRedirectURI
 	}
 
 	return cfg, nil

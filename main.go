@@ -51,9 +51,9 @@ func main() {
 	session.HttpOnly = true
 	session.Secure = true
 
-	// use test storage when cfg.ClientID is unset
+	// use test storage when cfg.SpotifyClientID is unset
 	var storage core.TrackStorage
-	if cfg.ClientID == "" {
+	if cfg.SpotifyClientID == "" {
 		storage = test.NewTrackStorage()
 	} else {
 		storage = spotify.NewTrackStorage(session)

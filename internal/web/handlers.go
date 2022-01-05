@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"crypto/rand"
 	"encoding/base64"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"html/template"
@@ -16,9 +17,18 @@ import (
 
 var (
 	filterCount = 3
-	stateCookieName = "state"
-	tokenCookieName = "token"
+
+	spotifyAuthURL = "https://accounts.spotify.com/authorize"
+	spotifyTokenURL = "https://accounts.spotify.com/api/token"
 )
+
+type AccessTokenResponse struct {
+	AccessToken  string `json:"access_token"`
+	TokenType    string `json:"token_type"`
+	Scope        string `json:"scope"`
+	ExpiresIn    int    `json:"expires_in"`
+	RefreshToken string `json:"refresh_token"`
+}
 
 // uses regular error responses (user isn't at the main app yet)
 func (app *Application) handleIndex(w http.ResponseWriter, r *http.Request) {
@@ -42,47 +52,119 @@ func (app *Application) handleIndex(w http.ResponseWriter, r *http.Request) {
 
 // redirect user to spotify authorize w/ ID, scope, etc
 func (app *Application) handleLogin(w http.ResponseWriter, r *http.Request) {
-	// simulate login when cfg.ClientID is unset
-	if app.cfg.ClientID == "" {
+	// simulate login when cfg.SpotifyClientID is unset
+	if app.cfg.SpotifyClientID == "" {
 		token, err := generateRandomString(32)
 		if err != nil {
 			app.serverErrorResponse(w, r, err)
 			return
 		}
 
-		app.session.Put(r, tokenCookieName, token)
+		app.session.Put(r, "token", token)
 		http.Redirect(w, r, "/jamql", 302)
 		return
 	}
 
-	// generate state first since it can (rarely) cause errors
+	// generate state first since it can cause errors (unlikely)
 	state, err := generateRandomString(16)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 		return
 	}
 
-	// redirect user to Spotify's login service
+	// save state in session
+	app.session.Put(r, "state", state)
+
+	// prepare auth values
 	values := url.Values{}
-	values.Set("response_type", "token")
-	values.Set("client_id", app.cfg.ClientID)
+	values.Set("response_type", "code")
+	values.Set("client_id", app.cfg.SpotifyClientID)
 	values.Set("scope", "playlist-modify-public")
-	values.Set("redirect_uri", app.cfg.RedirectURI)
+	values.Set("redirect_uri", app.cfg.SpotifyRedirectURI)
 	values.Set("state", state)
 
-	authURL, err := url.Parse("https://accounts.spotify.com/authorize")
+	authURL, err := url.Parse(spotifyAuthURL)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 		return
 	}
 
+	// redirect the user to spotify's auth service
 	authURL.RawQuery = values.Encode()
-	app.logger.Println(authURL.String())
+	http.Redirect(w, r, authURL.String(), 302)
 }
 
 // stores access_token in a cookie (URL param)
 func (app *Application) handleCallback(w http.ResponseWriter, r *http.Request) {
+	app.logger.Println(r.URL)
+	values := r.URL.Query()
 
+	// check for auth error
+	if values.Get("error") != "" {
+		app.logger.Println(values.Get("error"))
+		http.Redirect(w, r, "/", 302)
+		return
+	}
+
+	// validate state values
+	state := app.session.PopString(r, "state")
+	if state == "" || state != values.Get("state") {
+		app.logger.Println("mismatched state values")
+		http.Redirect(w, r, "/", 302)
+		return
+	}
+
+	// grab the code before reusing "values" var
+	code := values.Get("code")
+
+	// prepare token request values
+	values = url.Values{}
+	values.Set("grant_type", "authorization_code")
+	values.Set("code", code)
+	values.Set("redirect_uri", app.cfg.SpotifyRedirectURI)
+
+	// create the POST request
+	buf := bytes.NewBufferString(values.Encode())
+	req, err := http.NewRequest("POST", spotifyTokenURL, buf)
+	if err != nil {
+		app.logger.Println(err)
+		http.Redirect(w, r, "/", 302)
+		return
+	}
+
+	// setup auth and content headers
+	auth := app.cfg.SpotifyClientID + ":" + app.cfg.SpotifyClientSecret
+	auth = base64.StdEncoding.EncodeToString([]byte(auth))
+	req.Header.Set("Authorization", "Basic " + auth)
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	// exchange the code for an access token
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		app.logger.Println(err)
+		http.Redirect(w, r, "/", 302)
+		return
+	}
+	defer resp.Body.Close()
+
+	// check for errors
+	if resp.StatusCode != 200 {
+		app.logger.Printf("non 200 status from code exchange: %d\n", resp.StatusCode)
+		http.Redirect(w, r, "/", 302)
+		return
+	}
+
+	// decode the JSON payload
+	var payload AccessTokenResponse
+	err = json.NewDecoder(resp.Body).Decode(&payload)
+	if err != nil {
+		app.logger.Println(err)
+		http.Redirect(w, r, "/", 302)
+		return
+	}
+
+	app.session.Put(r, "token", payload.AccessToken)
+	http.Redirect(w, r, "/jamql", 302)
 }
 
 // uses regular error responses (user isn't at the main app yet)

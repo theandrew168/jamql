@@ -67,6 +67,7 @@ func (app *Application) Router() http.Handler {
 	r.Get("/callback", app.handleCallback)
 
 	// TODO: require tok cookie, else redir to /login
+	// middleware ensures "token" exists in session, else redir
 	r.Get("/jamql", app.handleJamQL)
 	r.Post("/search", app.handleSearch)
 	r.Post("/save", app.handleSave)
