@@ -12,7 +12,7 @@ type storage struct {
 	session *sessions.Session
 }
 
-func NewStorage(session *sessions.Session) core.Storage {
+func NewTrackStorage(session *sessions.Session) core.TrackStorage {
 	s := storage{
 		session: session,
 	}

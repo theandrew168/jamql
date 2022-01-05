@@ -52,11 +52,11 @@ func main() {
 	session.Secure = true
 
 	// use test storage when cfg.ClientID is unset
-	var storage core.Storage
+	var storage core.TrackStorage
 	if cfg.ClientID == "" {
-		storage = test.NewStorage()
+		storage = test.NewTrackStorage()
 	} else {
-		storage = spotify.NewStorage(session)
+		storage = spotify.NewTrackStorage(session)
 	}
 
 	app := web.NewApplication(cfg, storage, session, logger)

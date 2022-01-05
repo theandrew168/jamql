@@ -10,7 +10,7 @@ type storage struct {
 	tracks []core.Track
 }
 
-func NewStorage() core.Storage {
+func NewTrackStorage() core.TrackStorage {
 	s := storage{
 		tracks: SampleTracks,
 	}

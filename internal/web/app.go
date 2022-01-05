@@ -23,12 +23,12 @@ type Application struct {
 	cfg config.Config
 
 	templates fs.FS
-	storage   core.Storage
+	storage   core.TrackStorage
 	session   *sessions.Session
 	logger    *log.Logger
 }
 
-func NewApplication(cfg config.Config, storage core.Storage, session *sessions.Session, logger *log.Logger) *Application {
+func NewApplication(cfg config.Config, storage core.TrackStorage, session *sessions.Session, logger *log.Logger) *Application {
 	var templates fs.FS
 	if strings.HasPrefix(os.Getenv("ENV"), "dev") {
 		// reload templates from filesystem if var ENV starts with "dev"
