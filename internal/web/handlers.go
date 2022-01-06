@@ -17,7 +17,11 @@ import (
 
 var (
 	filterCount = 3
+)
 
+// Based on:
+// https://developer.spotify.com/documentation/general/guides/authorization/code-flow/
+var (
 	spotifyAuthURL = "https://accounts.spotify.com/authorize"
 	spotifyTokenURL = "https://accounts.spotify.com/api/token"
 )
@@ -163,6 +167,7 @@ func (app *Application) handleCallback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// store the token and redirect to the main app page
 	app.session.Put(r, "token", payload.AccessToken)
 	http.Redirect(w, r, "/jamql", 302)
 }
@@ -215,7 +220,7 @@ func (app *Application) handleSearch(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		// redirect to /login if unauthorized (token expired)
 		if errors.Is(err, core.ErrUnauthorized) {
-			http.Redirect(w, r, "/login", 303)
+			http.Redirect(w, r, "/login", 302)
 			return
 		}
 		app.serverErrorFlash(w, r, err)
@@ -270,7 +275,7 @@ func (app *Application) handleSave(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		// redirect to /login if unauthorized (token expired)
 		if errors.Is(err, core.ErrUnauthorized) {
-			http.Redirect(w, r, "/login", 303)
+			http.Redirect(w, r, "/login", 302)
 			return
 		}
 		app.serverErrorFlash(w, r, err)

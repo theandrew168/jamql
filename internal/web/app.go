@@ -9,7 +9,6 @@ import (
 	"strings"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
 	"github.com/golangcollege/sessions"
 
 	"github.com/theandrew168/jamql/internal/config"
@@ -57,7 +56,6 @@ func NewApplication(cfg config.Config, storage core.TrackStorage, session *sessi
 func (app *Application) Router() http.Handler {
 	r := chi.NewRouter()
 	r.Use(app.session.Enable)
-	r.Use(middleware.Recoverer)
 
 	r.NotFound(app.notFoundResponse)
 	r.MethodNotAllowed(app.methodNotAllowedResponse)
@@ -66,11 +64,10 @@ func (app *Application) Router() http.Handler {
 	r.Get("/login", app.handleLogin)
 	r.Get("/callback", app.handleCallback)
 
-	// TODO: require tok cookie, else redir to /login
-	// middleware ensures "token" exists in session, else redir
-	r.Get("/jamql", app.handleJamQL)
-	r.Post("/search", app.handleSearch)
-	r.Post("/save", app.handleSave)
+	// middleware ensures "token" exists in session, else redir to /login
+	r.Get("/jamql", app.requireToken(app.handleJamQL))
+	r.Post("/search", app.requireToken(app.handleSearch))
+	r.Post("/save", app.requireToken(app.handleSave))
 
 	return r
 }

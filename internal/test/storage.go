@@ -20,7 +20,7 @@ func NewTrackStorage() core.TrackStorage {
 func (s *storage) SearchTracks(r *http.Request, filters []core.Filter) ([]core.Track, error) {
 	// handle no filters as a special case (return no tracks)
 	if len(filters) == 0 {
-		return []core.Track{}, nil
+		return nil, nil
 	}
 
 	// apply each filter

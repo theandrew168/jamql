@@ -17,6 +17,7 @@ import (
 
 	"github.com/coreos/go-systemd/daemon"
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 	"github.com/golangcollege/sessions"
 	"github.com/klauspost/compress/gzhttp"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -51,9 +52,10 @@ func main() {
 	session.HttpOnly = true
 	session.Secure = true
 
-	// use test storage when cfg.SpotifyClientID is unset
+	// use test storage if spotify creds are unset
 	var storage core.TrackStorage
-	if cfg.SpotifyClientID == "" {
+	if cfg.SpotifyClientID == "" || cfg.SpotifyClientSecret == "" {
+		logger.Println("missing Spotify creds, running with sample tracks")
 		storage = test.NewTrackStorage()
 	} else {
 		storage = spotify.NewTrackStorage(session)
@@ -68,6 +70,7 @@ func main() {
 
 	// construct the top-level router
 	r := chi.NewRouter()
+	r.Use(middleware.Recoverer)
 	r.Mount("/", app.Router())
 	r.Handle("/metrics", promhttp.Handler())
 	r.Handle("/static/*", http.StripPrefix("/static", gzipStaticServer))
