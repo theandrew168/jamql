@@ -72,6 +72,7 @@ func (s *storage) SearchTracks(r *http.Request, filters []core.Filter) ([]core.T
 			}
 		}
 
+		// default to placeholder artwork
 		artwork := "https://bulma.io/images/placeholders/64x64.png"
 		for _, image := range t.Album.Images {
 			if image.Width == 64 && image.Height == 64 {
@@ -102,8 +103,54 @@ func (s *storage) SearchTracks(r *http.Request, filters []core.Filter) ([]core.T
 
 func (s *storage) SaveTracks(r *http.Request, tracks []core.Track, name, desc string) error {
 	// early exit if no auth token is present
-	if !s.session.Exists(r, "token") {
+	token := s.session.GetString(r, "token")
+	if token == "" {
 		return core.ErrUnauthorized
+	}
+
+	// grab the current user
+	client := spotify.New(NewAccessTokenClient(token))
+	user, err := client.CurrentUser(context.Background())
+	if err != nil {
+		if err.Error() == "Invalid access token" {
+			return core.ErrUnauthorized
+		}
+		return err
+	}
+
+	// create the playlist
+	playlist, err := client.CreatePlaylistForUser(
+		context.Background(),
+		user.ID,
+		name,
+		desc,
+		true,
+		false,
+	)
+	if err != nil {
+		if err.Error() == "Invalid access token" {
+			return core.ErrUnauthorized
+		}
+		return err
+	}
+
+	// build a slice of track IDs
+	var ids []spotify.ID
+	for _, track := range tracks {
+		ids = append(ids, spotify.ID(track.ID))
+	}
+
+	// add tracks to the playlist
+	_, err = client.AddTracksToPlaylist(
+		context.Background(),
+		playlist.ID,
+		ids...,
+	)
+	if err != nil {
+		if err.Error() == "Invalid access token" {
+			return core.ErrUnauthorized
+		}
+		return err
 	}
 
 	return nil

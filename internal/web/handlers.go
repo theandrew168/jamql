@@ -100,7 +100,6 @@ func (app *Application) handleLogin(w http.ResponseWriter, r *http.Request) {
 
 // stores access_token in a cookie (URL param)
 func (app *Application) handleCallback(w http.ResponseWriter, r *http.Request) {
-	app.logger.Println(r.URL)
 	values := r.URL.Query()
 
 	// check for auth error
