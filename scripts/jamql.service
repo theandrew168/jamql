@@ -1,0 +1,16 @@
+[Unit]
+Description=jamql
+Documentation=https://github.com/theandrew168/jamql
+After=network.target network-online.target
+Requires=network-online.target
+
+[Service]
+Type=notify
+Restart=on-failure
+RestartSec=5
+User=jamql
+Group=jamql
+ExecStart=jamql -conf /etc/jamql.conf
+
+[Install]
+WantedBy=multi-user.target

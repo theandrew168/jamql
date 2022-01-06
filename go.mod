@@ -9,6 +9,7 @@ require (
 	github.com/golangcollege/sessions v1.2.0
 	github.com/klauspost/compress v1.13.6
 	github.com/prometheus/client_golang v1.11.0
+	github.com/zmb3/spotify/v2 v2.0.1
 )
 
 require (
@@ -19,7 +20,6 @@ require (
 	github.com/prometheus/client_model v0.2.0 // indirect
 	github.com/prometheus/common v0.26.0 // indirect
 	github.com/prometheus/procfs v0.6.0 // indirect
-	github.com/zmb3/spotify/v2 v2.0.1 // indirect
 	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9 // indirect
 	golang.org/x/net v0.0.0-20210813160813-60bc85c4be6d // indirect
 	golang.org/x/oauth2 v0.0.0-20210810183815-faf39c7919d5 // indirect

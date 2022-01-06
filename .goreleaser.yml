@@ -19,26 +19,26 @@ archives:
       - goos: windows
         format: zip
 
-#nfpms:
-#  - package_name: jamql
-#    file_name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
-#    homepage: https://github.com/theandrew168/jamql
-#    maintainer: Andrew Dailey <andrew@shallowbrooksoftware.com>
-#    description: A website for avid blog readers
-#    license: MIT
-#    formats:
-#      - deb
-#    bindir: /usr/bin
-#    contents:
-#      - src: scripts/jamql.service
-#        dst: /lib/systemd/system/jamql.service
-#      - src: jamql.conf
-#        dst: /etc/jamql.conf
-#        type: config
-#    scripts:
-#      postinstall: scripts/postinstall.sh
-#      preremove: scripts/preremove.sh
-#      postremove: scripts/postremove.sh
+nfpms:
+  - package_name: jamql
+    file_name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
+    homepage: https://github.com/theandrew168/jamql
+    maintainer: Andrew Dailey <andrew@shallowbrooksoftware.com>
+    description: Smart playlists for Spotify
+    license: MIT
+    formats:
+      - deb
+    bindir: /usr/bin
+    contents:
+      - src: scripts/jamql.service
+        dst: /lib/systemd/system/jamql.service
+      - src: jamql.conf
+        dst: /etc/jamql.conf
+        type: config
+    scripts:
+      postinstall: scripts/postinstall.sh
+      preremove: scripts/preremove.sh
+      postremove: scripts/postremove.sh
 
 checksum:
   name_template: checksums.txt
