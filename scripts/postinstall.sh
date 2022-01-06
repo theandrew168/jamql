@@ -8,11 +8,10 @@ fi
 
 # Create jamql user (if it doesn't exist)
 if ! getent passwd jamql >/dev/null; then
-    useradd                            \
-        --system                       \
-        --gid jamql                    \
-        --shell /usr/sbin/nologin      \
-        --comment "jamql feed reader"  \
+    useradd                        \
+        --system                   \
+        --gid jamql                \
+        --shell /usr/sbin/nologin  \
         jamql
 fi
 
