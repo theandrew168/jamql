@@ -32,7 +32,7 @@ nfpms:
     contents:
       - src: scripts/jamql.service
         dst: /lib/systemd/system/jamql.service
-      - src: jamql.conf
+      - src: scripts/jamql.conf
         dst: /etc/jamql.conf
         type: config
     scripts:

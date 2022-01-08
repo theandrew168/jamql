@@ -8,7 +8,7 @@ This project depends on the [Go programming language](https://golang.org/dl/).
 If actively working on frontend templates, set `ENV=dev` to tell the server to reload templates from the filesystem on every page load.
 ```bash
 # make run
-ENV=dev go run main.go -conf internal/test/jamql.conf
+ENV=dev go run main.go
 ```
 
 ## Testing
