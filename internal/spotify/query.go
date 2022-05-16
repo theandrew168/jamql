@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/theandrew168/jamql/pkg/core"
+	"github.com/theandrew168/jamql/internal/core"
 )
 
 var (

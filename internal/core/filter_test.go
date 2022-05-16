@@ -3,8 +3,8 @@ package core_test
 import (
 	"testing"
 
-	"github.com/theandrew168/jamql/pkg/core"
-	"github.com/theandrew168/jamql/pkg/test"
+	"github.com/theandrew168/jamql/internal/core"
+	"github.com/theandrew168/jamql/internal/test"
 )
 
 func TestValidFilters(t *testing.T) {
