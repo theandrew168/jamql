@@ -12,7 +12,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/theandrew168/jamql/internal/core"
+	"github.com/theandrew168/jamql/pkg/core"
 )
 
 var (

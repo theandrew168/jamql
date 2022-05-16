@@ -30,15 +30,15 @@ nfpms:
       - deb
     bindir: /usr/bin
     contents:
-      - src: scripts/jamql.service
+      - src: script/jamql.service
         dst: /lib/systemd/system/jamql.service
-      - src: scripts/jamql.conf
+      - src: script/jamql.conf
         dst: /etc/jamql.conf
         type: config
     scripts:
-      postinstall: scripts/postinstall.sh
-      preremove: scripts/preremove.sh
-      postremove: scripts/postremove.sh
+      postinstall: script/postinstall.sh
+      preremove: script/preremove.sh
+      postremove: script/postremove.sh
 
 checksum:
   name_template: checksums.txt

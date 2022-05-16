@@ -3,8 +3,8 @@ package spotify_test
 import (
 	"testing"
 
-	"github.com/theandrew168/jamql/internal/core"
-	"github.com/theandrew168/jamql/internal/spotify"
+	"github.com/theandrew168/jamql/pkg/core"
+	"github.com/theandrew168/jamql/pkg/spotify"
 )
 
 func TestQueryBuild(t *testing.T) {

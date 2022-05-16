@@ -9,7 +9,7 @@ import (
 	"github.com/golangcollege/sessions"
 	"github.com/zmb3/spotify/v2"
 
-	"github.com/theandrew168/jamql/internal/core"
+	"github.com/theandrew168/jamql/pkg/core"
 )
 
 type storage struct {

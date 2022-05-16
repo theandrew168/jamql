@@ -11,8 +11,8 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/golangcollege/sessions"
 
-	"github.com/theandrew168/jamql/internal/config"
-	"github.com/theandrew168/jamql/internal/core"
+	"github.com/theandrew168/jamql/pkg/config"
+	"github.com/theandrew168/jamql/pkg/core"
 )
 
 //go:embed templates
@@ -32,7 +32,7 @@ func NewApplication(cfg config.Config, storage core.TrackStorage, session *sessi
 	if strings.HasPrefix(os.Getenv("ENV"), "dev") {
 		// reload templates from filesystem if var ENV starts with "dev"
 		// NOTE: os.DirFS is rooted from where the app is ran, not this file
-		templates = os.DirFS("./internal/web/templates/")
+		templates = os.DirFS("./pkg/web/templates/")
 	} else {
 		// else use the embedded templates dir
 		templates, _ = fs.Sub(templatesFS, "templates")

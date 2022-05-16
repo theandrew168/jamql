@@ -14,7 +14,7 @@ run:
 
 .PHONY: test
 test:
-	go test -count=1 -v ./...
+	go test -count=1 ./...
 
 .PHONY: race
 race:
@@ -24,6 +24,10 @@ race:
 cover:
 	go test -coverprofile=c.out -coverpkg=./... -count=1 ./...
 	go tool cover -html=c.out
+
+.PHONY: release
+release:
+	goreleaser release --snapshot --rm-dist
 
 .PHONY: format
 format:

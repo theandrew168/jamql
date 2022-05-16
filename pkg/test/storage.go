@@ -3,7 +3,7 @@ package test
 import (
 	"net/http"
 
-	"github.com/theandrew168/jamql/internal/core"
+	"github.com/theandrew168/jamql/pkg/core"
 )
 
 type storage struct {

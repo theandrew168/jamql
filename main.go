@@ -22,11 +22,11 @@ import (
 	"github.com/klauspost/compress/gzhttp"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 
-	"github.com/theandrew168/jamql/internal/config"
-	"github.com/theandrew168/jamql/internal/core"
-	"github.com/theandrew168/jamql/internal/spotify"
-	"github.com/theandrew168/jamql/internal/test"
-	"github.com/theandrew168/jamql/internal/web"
+	"github.com/theandrew168/jamql/pkg/config"
+	"github.com/theandrew168/jamql/pkg/core"
+	"github.com/theandrew168/jamql/pkg/spotify"
+	"github.com/theandrew168/jamql/pkg/test"
+	"github.com/theandrew168/jamql/pkg/web"
 )
 
 //go:embed static
